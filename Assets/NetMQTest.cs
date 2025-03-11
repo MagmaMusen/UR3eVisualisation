@@ -1,3 +1,7 @@
+/*
+ This is a modified version of: https://github.com/valkjsaaa/Unity-ZeroMQ-Example/blob/master/Assets/ClientObject.cs
+ */
+
 using System.Collections.Concurrent;
 using System.Threading;
 using NetMQ;
