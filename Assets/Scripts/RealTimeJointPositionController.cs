@@ -3,11 +3,11 @@ using UnityEngine;
 public class JointPositionController : MonoBehaviour
 {
     public ArticulationBody[] joints; // Assign joints in Inspector
-    public float[] targetPositions;   // Target positions (in degrees)
-    public float Speed = 10f;        // Speed in degrees per second
-    public float Stiffness = 100000f;
-    public float Damping = 10000f;
-    public float ForceLimit = 100f;
+    private float[] targetPositions = { 0f, 0f, 0f, 0f, 0f, 0f };   // Target positions (in degrees)
+    private float Speed = 20f;        // Speed in degrees per second
+    private float Stiffness = 100000f;
+    private float Damping = 10000f;
+    private float ForceLimit = 10000f;
 
 
     void Start()
