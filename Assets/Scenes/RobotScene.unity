@@ -3309,7 +3309,7 @@ MonoBehaviour:
   MoveSpeed: 1
   PanSpeed: 10
   PanInverted: 1
-  ScrollSpeed: 10
+  ScrollSpeed: 1.5
   ScrollInverted: 0
   LookSensitivity: 127
   ClampAngle: 80
@@ -3318,7 +3318,7 @@ MonoBehaviour:
   OrbitSpeed: 5
   InvertOrbit: 0
   FocusDistance: 5
-  MinDistanceToSelection: 1
+  MinDistanceToSelection: 0.8
   UseMinDistance: 1
   HitpointMarkerPrefab: {fileID: 8693843172903865716, guid: 942dce9430b030549ab0b8a77d106cb6, type: 3}
 --- !u!1001 &968980519
@@ -3489,7 +3489,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1786, y: 870}
+  m_AnchoredPosition: {x: -2161, y: 1288}
   m_SizeDelta: {x: 886.755, y: 249.907}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &998950780

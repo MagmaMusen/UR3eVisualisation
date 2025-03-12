@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -16,9 +14,6 @@ public class HideObjectsController : MonoBehaviour
     {
         menuButton = GameObject.Find("MenuButton");
         hitPointMarker = GameObject.Find("HitPointMarker(Clone)");
-
-        if (hitPointMarker == null)
-            Debug.LogWarning("HitPointMarker not found in the scene!");
 
         if (menuButton == null)
             Debug.LogWarning("MenuButton not found in the scene!");

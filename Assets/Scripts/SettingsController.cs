@@ -60,4 +60,9 @@ public class SettingsController : MonoBehaviour
         return inputField.transform.parent.name;
     }
 
+    public void OpenArticulationBodyURL ()
+    {
+        Application.OpenURL("https://docs.unity3d.com/6000.0/Documentation/Manual/class-ArticulationBody.html");
+    }
+
 }
