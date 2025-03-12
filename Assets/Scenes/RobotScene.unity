@@ -2569,7 +2569,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 726816850}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2088922656}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+        m_MethodName: Quit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &726816850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3276,7 +3288,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.06993057, y: 0, z: 0, w: 0.99755186}
-  m_LocalPosition: {x: 0, y: 0.67, z: -2.17}
+  m_LocalPosition: {x: -0.2, y: 0.381, z: -0.957}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3294,21 +3306,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e69228819c8b84c883c139ef81b736, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 5
+  MoveSpeed: 1
   PanSpeed: 10
   PanInverted: 1
   ScrollSpeed: 10
   ScrollInverted: 0
-  LookSensitivity: 200
+  LookSensitivity: 127
   ClampAngle: 80
   LookInvertX: 0
   LookInvertY: 0
   OrbitSpeed: 5
   InvertOrbit: 0
   FocusDistance: 5
-  MinDistanceToSelection: 2
+  MinDistanceToSelection: 1
   UseMinDistance: 1
-  HitpointMarkerPrefab: {fileID: 0}
+  HitpointMarkerPrefab: {fileID: 8693843172903865716, guid: 942dce9430b030549ab0b8a77d106cb6, type: 3}
 --- !u!1001 &968980519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3454,7 +3466,7 @@ GameObject:
   - component: {fileID: 998950781}
   - component: {fileID: 998950780}
   m_Layer: 5
-  m_Name: Button
+  m_Name: MenuButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4597,6 +4609,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!1 &1509306146
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1509306148}
+  - component: {fileID: 1509306147}
+  m_Layer: 0
+  m_Name: HideObjectsController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1509306147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509306146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e33522ce5eda76b46a6f713b97c642fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1509306148
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509306146}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 955.4773, y: 544.7791, z: 3.9116933}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1517189792
 GameObject:
   m_ObjectHideFlags: 0
@@ -5130,7 +5186,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1606970865}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2088922656}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+        m_MethodName: Controls
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1606970865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6770,3 +6838,4 @@ SceneRoots:
   - {fileID: 419458470}
   - {fileID: 2088922655}
   - {fileID: 874816928}
+  - {fileID: 1509306148}

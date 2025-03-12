@@ -10,7 +10,7 @@ public class FreeStyleCameraController : MonoBehaviour
     #region Inspector Properties
 
     [Header("Move Settings")]
-    [Range(1, 10)]
+    [Range(0.1f, 10)]
     [Tooltip("The move speed with WASD keys.")]
     public float MoveSpeed = 5f;
 
