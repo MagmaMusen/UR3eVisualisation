@@ -9,6 +9,21 @@ public class JointPositionController : MonoBehaviour
     private float Damping = 10000f;
     private float ForceLimit = 10000f;
 
+    public void GetRecentParameters ()
+    {
+        Debug.Log("Applying recent settings");
+        string SpeedKey = DefaultSettings.Keys.Speed;
+        Speed = float.Parse(PlayerPrefs.GetString(SpeedKey, DefaultSettings.Lookup[SpeedKey]));
+
+        string StiffnessKey = DefaultSettings.Keys.Stiffness;
+        Stiffness = float.Parse(PlayerPrefs.GetString(StiffnessKey, DefaultSettings.Lookup[StiffnessKey]));
+
+        string DampingKey = DefaultSettings.Keys.Damping;
+        Damping = float.Parse(PlayerPrefs.GetString(DampingKey, DefaultSettings.Lookup[DampingKey]));
+
+        string ForceLimitKey = DefaultSettings.Keys.ForceLimit;
+        ForceLimit = float.Parse(PlayerPrefs.GetString(ForceLimitKey, DefaultSettings.Lookup[ForceLimitKey]));
+    }
 
     void Start()
     {
@@ -17,6 +32,8 @@ public class JointPositionController : MonoBehaviour
             Debug.LogError("Joints and target positions must have the same length!");
             return;
         }
+
+        GetRecentParameters();
     }
 
     void Update()

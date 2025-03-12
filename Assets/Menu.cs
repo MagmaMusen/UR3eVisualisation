@@ -5,6 +5,7 @@ public class Menu : MonoBehaviour
 {
     public static bool MenuIsActive = false;
     public GameObject MenuUI;
+    public GameObject MenuButton;
 
     // Update is called once per frame
     void Update()
@@ -24,12 +25,14 @@ public class Menu : MonoBehaviour
     public void Resume ()
     {
         MenuUI.SetActive(false);
+        MenuButton.SetActive(true);
         MenuIsActive = false;
     }
 
     public void ActivateMenu()
     {
         MenuUI.SetActive(true);
+        MenuButton.SetActive(false);
         MenuIsActive = true;
     }
 

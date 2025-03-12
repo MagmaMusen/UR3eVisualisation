@@ -27,8 +27,14 @@ public class ClientObject : MonoBehaviour
         UpdateJP.Invoke(jpIndex, jp);
     }
 
+    public void GetRecentParameters ()
+    {
+        port = PlayerPrefs.GetString(DefaultSettings.Keys.Port, DefaultSettings.Lookup[DefaultSettings.Keys.Port]);
+    }
+
     private void Start()
     {
+        GetRecentParameters();
         _netMqListener = new NetMqListener(HandleMessage, topic, port);
         _netMqListener.Start();
     }
