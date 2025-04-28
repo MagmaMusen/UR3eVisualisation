@@ -1,7 +1,7 @@
 /*
  This is a modified version of: https://github.com/valkjsaaa/Unity-ZeroMQ-Example/blob/master/Assets/ClientObject.cs
  Modified to handle separate topics for Physical Twin (PT) and Digital Twin (DT) data streams.
- Includes fix for multipart message handling in the listener.
+ Listener configured to expect SINGLE-FRAME messages containing "topic value".
  */
 
 using System.Collections.Concurrent;
@@ -65,7 +65,7 @@ public class ClientObject : MonoBehaviour
     }
 
     // Callback method passed to the NetMqListener to process received messages
-    // This function now correctly receives the combined "topic value" string
+    // This function receives the combined "topic value" string
     private void HandleMessage(string message)
     {
         // Expected format: "topic_prefix[index] value" (e.g., "actual_q0 1.5708")
@@ -73,8 +73,7 @@ public class ClientObject : MonoBehaviour
 
         if (msgSplit.Length != 2)
         {
-            // This warning should no longer appear frequently if the ListenerWork fix works
-            Debug.LogWarning($"Received message with unexpected format: '{message}'. Expected 'topic_prefix[index] value'.");
+            Debug.LogWarning($"[HandleMessage] Received message with unexpected format: '{message}'. Expected 'topic_prefix[index] value'.");
             return;
         }
 
@@ -84,33 +83,60 @@ public class ClientObject : MonoBehaviour
         int jointIndex = -1;
         float jointValue = 0f;
 
-        // --- Basic Index Parsing (assumes single digit at the end) ---
-        if (fullTopic.Length > 0 && char.IsDigit(fullTopic[fullTopic.Length - 1]))
-        {
-            jointIndex = int.Parse(fullTopic[fullTopic.Length - 1].ToString());
-        }
-        // --- More Robust Index Parsing (Example using Regex for digits at the end) ---
-        // Match match = Regex.Match(fullTopic, @"(\d+)$");
-        // if (match.Success)
-        // {
-        //     jointIndex = int.Parse(match.Groups[1].Value);
-        // }
-        // ---
+        // --- Topic/Index Parsing ---
+        // Find the last underscore if present (e.g., actual_q_2)
+        int lastUnderscore = fullTopic.LastIndexOf('_');
+        string actualTopicPrefix;
+        string indexString;
 
-        if (jointIndex == -1)
+        if (lastUnderscore != -1 && lastUnderscore < fullTopic.Length - 1)
         {
-            Debug.LogWarning($"Could not parse joint index from topic: '{fullTopic}'");
+            // Assume index is after the last underscore
+            actualTopicPrefix = fullTopic.Substring(0, lastUnderscore);
+            indexString = fullTopic.Substring(lastUnderscore + 1);
+        }
+        else if (fullTopic.Length > 0 && char.IsDigit(fullTopic[fullTopic.Length - 1]))
+        {
+            // Fallback: Assume index is the last character if no underscore found before digits
+            // and the prefix matches the expected ones
+            if (fullTopic.StartsWith(ptTopicPrefix) && fullTopic.Length > ptTopicPrefix.Length)
+            {
+                actualTopicPrefix = ptTopicPrefix;
+                indexString = fullTopic.Substring(ptTopicPrefix.Length);
+            }
+            else if (fullTopic.StartsWith(dtTopicPrefix) && fullTopic.Length > dtTopicPrefix.Length)
+            {
+                actualTopicPrefix = dtTopicPrefix;
+                indexString = fullTopic.Substring(dtTopicPrefix.Length);
+            }
+            else
+            {
+                Debug.LogWarning($"[HandleMessage] Could not determine index/prefix from topic: '{fullTopic}'");
+                return;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[HandleMessage] Could not determine index/prefix from topic: '{fullTopic}'");
             return;
         }
+
+        if (!int.TryParse(indexString, out jointIndex))
+        {
+            Debug.LogWarning($"[HandleMessage] Could not parse joint index from extracted string: '{indexString}' in topic '{fullTopic}'");
+            return;
+        }
+        // --- End Topic/Index Parsing ---
+
 
         if (!float.TryParse(valueString, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out jointValue))
         {
-            Debug.LogWarning($"Could not parse float value from message part: '{valueString}' in full message '{message}'");
+            Debug.LogWarning($"[HandleMessage] Could not parse float value from message part: '{valueString}' in full message '{message}'");
             return;
         }
 
-
-        // Check which topic prefix the message matches and invoke the correct event
+        // Check which topic prefix the message *actually* started with and invoke the correct event
+        // Use StartsWith on the original fullTopic or the extracted actualTopicPrefix
         if (fullTopic.StartsWith(ptTopicPrefix))
         {
             //Debug.Log($"Received PT Update: Joint {jointIndex}, Value {jointValue}"); // Log if needed
@@ -124,7 +150,7 @@ public class ClientObject : MonoBehaviour
         else
         {
             // Optional: Log if message topic doesn't match expected prefixes
-            // Debug.LogWarning($"Received message with unrecognized topic prefix: '{fullTopic}'");
+            Debug.LogWarning($"[HandleMessage] Received message topic '{fullTopic}' does not match configured PT ('{ptTopicPrefix}') or DT ('{dtTopicPrefix}') prefixes.");
         }
     }
 
@@ -169,7 +195,7 @@ public class NetMqListener
         _listenerWorker = new Thread(ListenerWork);
     }
 
-    // *** MODIFIED ListenerWork to handle multipart messages ***
+    // *** ListenerWork configured for SINGLE-FRAME messages ***
     private void ListenerWork()
     {
         AsyncIO.ForceDotNet.Force(); // Recommended for NetMQ in Unity
@@ -182,7 +208,7 @@ public class NetMqListener
             {
                 subSocket.Connect(connectionString);
 
-                // Subscribe to both PT and DT topics using non-empty prefixes
+                // Subscribe to topics using non-empty prefixes
                 if (!string.IsNullOrEmpty(_ptTopicPrefix))
                 {
                     Debug.Log($"NetMQ Thread: Subscribing to PT topic prefix: '{_ptTopicPrefix}'");
@@ -198,37 +224,15 @@ public class NetMqListener
 
                 while (!_listenerCancelled)
                 {
-                    string topicFrame;
-                    // Try to receive the first frame (topic) with a timeout
-                    if (subSocket.TryReceiveFrameString(TimeSpan.FromMilliseconds(100), out topicFrame))
+                    string receivedMessage;
+                    // Try to receive a single frame with a timeout
+                    if (subSocket.TryReceiveFrameString(TimeSpan.FromMilliseconds(100), out receivedMessage))
                     {
-                        // If the first frame was received, check if there's more to come (the value frame)
-                        if (subSocket.Options.ReceiveMore)
-                        {
-                            string valueFrame;
-                            // Try to receive the second frame (value)
-                            if (subSocket.TryReceiveFrameString(TimeSpan.FromMilliseconds(50), out valueFrame)) // Shorter timeout ok
-                            {
-                                // Successfully received both parts!
-                                // Combine them into the single string format expected by HandleMessage
-                                string combinedMessage = $"{topicFrame} {valueFrame}";
-                                _messageQueue.Enqueue(combinedMessage);
-                            }
-                            else
-                            {
-                                // Received topic but timed out waiting for value - likely an error from publisher or network
-                                Debug.LogWarning($"NetMQ Thread: Received topic '{topicFrame}' but timed out waiting for value frame.");
-                                // Discard the incomplete message
-                            }
-                        }
-                        else
-                        {
-                            // Received only one frame when expecting two (topic + value) - error from publisher
-                            Debug.LogWarning($"NetMQ Thread: Received single-frame message: '{topicFrame}'. Expected multipart message (topic + value).");
-                            // Discard this frame
-                        }
+                        // Successfully received the single frame containing "topic value"
+                        _messageQueue.Enqueue(receivedMessage);
+                        // Debug.Log($"[ListenerWork] Received: {receivedMessage}"); // Uncomment for deep debug
                     }
-                    // If TryReceiveFrameString for the topic times out or fails, the loop simply continues and tries again
+                    // If TryReceiveFrameString times out or fails, the loop simply continues
                 }
 
                 Debug.Log("NetMQ Thread: Listener cancelled. Closing socket.");
