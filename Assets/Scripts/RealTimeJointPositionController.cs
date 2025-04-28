@@ -9,7 +9,7 @@ public class JointPositionController : MonoBehaviour
     private float Damping = 10000f;
     private float ForceLimit = 10000f;
 
-    public void GetRecentParameters ()
+    public void GetRecentParameters()
     {
         Debug.Log("Applying recent settings");
         string SpeedKey = DefaultSettings.Keys.Speed;
@@ -24,6 +24,7 @@ public class JointPositionController : MonoBehaviour
         string ForceLimitKey = DefaultSettings.Keys.ForceLimit;
         ForceLimit = float.Parse(PlayerPrefs.GetString(ForceLimitKey, DefaultSettings.Lookup[ForceLimitKey]));
     }
+
 
     void Start()
     {
